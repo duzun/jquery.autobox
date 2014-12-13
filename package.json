@@ -1,0 +1,37 @@
+{
+  "name": "jquery.autobox",
+  "version": "2.0.0",
+  "description": "Resize the textarea (vertically or horizontally) automatically to fit the contents",
+  "homepage": "https://github.com/duzun/jquery.autobox",
+  "author": {
+    "name": "Dumitru Uzun",
+    "email": "contact@duzun.me",
+    "url": "https://DUzun.Me"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/duzun/jquery.autobox.git"
+  },
+  "bugs": "https://github.com/duzun/jquery.autobox/issues",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/duzun/jquery.autobox/blob/master/LICENSE-MIT"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt qunit"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-qunit": "~0.2.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-watch": "~0.4.0",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt": "~0.4.5"
+  }
+}
