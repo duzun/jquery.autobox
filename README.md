@@ -1,4 +1,4 @@
-# Autogrow `<textarea>` while tipying
+# Autogrow `<textarea>` while typing
 
 Resize the `<textarea>` (vertically or horizontally) automatically to fit the contents.
 

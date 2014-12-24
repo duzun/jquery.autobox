@@ -1,4 +1,4 @@
-/*! Autogrow Textareas while tipying - v2.0.0 - 2014-12-13
+/*! Autogrow Textareas while typing - v2.0.0 - 2014-12-24
 * https://github.com/duzun/jquery.autobox
 * Copyright (c) 2014 Dumitru Uzun
 * @licensed MIT
