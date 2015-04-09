@@ -5,6 +5,8 @@ Resize the `<textarea>` (vertically or horizontally) automatically to fit the co
 Note: This plugin is **under development**.
       It is fully operational, but might have some unexpected behaviour.
 
+[![devDependencies](https://david-dm.org/duzun/jquery.autobox/dev-status.svg)](https://david-dm.org/duzun/jquery.autobox#info=devDependencies&view=table)
+
 ## Getting Started
 Download the [production version][min] or the [development version][max].
 
