@@ -1,9 +1,14 @@
-/*! Autogrow Textareas while typing - v2.0.0 - 2014-12-24
-* https://github.com/duzun/jquery.autobox
-* Copyright (c) 2014 Dumitru Uzun
-* @licensed MIT
-* @author DUzun.Me
-*/;(function(window) {
+/** Autogrow Textareas while typing
+ *
+ * https://github.com/duzun/jquery.autobox
+ *
+ * Copyright (c) 2015 Dumitru Uzun
+ *
+ * @license MIT
+ * @version 2.0.0 - 2015-04-10
+ * @author DUzun.Me
+ */
+;(function(window) {
     'use strict';
 
     var TEXTAREA = 'TEXTAREA'

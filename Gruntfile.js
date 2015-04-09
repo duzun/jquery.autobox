@@ -6,13 +6,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     // Metadata.
     pkg: grunt.file.readJSON('jquery.autobox.json'),
-    banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
-      '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-      '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
-      '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n' +
-      '* @licensed <%= _.pluck(pkg.licenses, "type").join(", ") %>\n'+
-      '* @author DUzun.Me\n'+
-      '*/',
+    banner: '/** <%= pkg.title || pkg.name %>\n *\n' +
+      '<%= pkg.homepage ? " * " + pkg.homepage + "\\n *\\n" : "" %>' +
+      ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n *\n' +
+      ' * @license <%= _.pluck(pkg.licenses, "type").join(", ") %>\n'+
+      ' * @version <%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\n'+
+      ' * @author DUzun.Me\n'+
+      ' */\n',
     // Task configuration.
     clean: {
       files: ['dist']

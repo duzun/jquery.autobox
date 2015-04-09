@@ -12,10 +12,11 @@
  *
  * https://github.com/duzun/jquery.autobox
  *
- * Copyright (c) 2014 Dumitru Uzun
+ * Copyright (c) 2015 Dumitru Uzun
  *
- * @licensed The MIT license.
- * @author DUzun.Me
+ *  @license The MIT license.
+ *  @version 2.0.0
+ *  @author DUzun.Me
  */
 
 ;(function(window) {
