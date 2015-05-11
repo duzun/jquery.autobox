@@ -5,7 +5,7 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     // Metadata.
-    pkg: grunt.file.readJSON('jquery.autobox.json'),
+    pkg: grunt.file.readJSON('package.json'),
     banner: '/** <%= pkg.title || pkg.name %>\n *\n' +
       '<%= pkg.homepage ? " * " + pkg.homepage + "\\n *\\n" : "" %>' +
       ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n *\n' +
