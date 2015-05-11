@@ -21,14 +21,14 @@ In your web page:
 <script>
 jQuery(function($) {
 
-    // Adjust once Height/Width of all TEXTAREAs in `.myView` and it's descendants.
-    $('.myView').autobox();
-
     // Bind autobox events to all TEXTAREAs in `.myView` and it's descendants.
-    $('.myView').bindAutobox();
+    $('.myView').autoboxBind();
 
     // Bind autobox events to `document`, listening on `textarea.autobox` events.
     $(document).autoboxOn('textarea.autobox');
+
+    // Adjust once Height/Width of all TEXTAREAs in `.myView` and it's descendants.
+    $('.myView').autobox();
 
 });
 </script>

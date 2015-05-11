@@ -5,7 +5,7 @@
  * Copyright (c) 2015 Dumitru Uzun
  *
  * @license MIT
- * @version 2.0.0 - 2015-04-10
+ * @version 2.1.0 - 2015-05-11
  * @author DUzun.Me
  */
 ;(function(window) {
@@ -16,7 +16,8 @@
     ,   namespace = '.dynSiz'
 
     ,   _events = [
-            'keypress'
+            'autobox'
+          , 'keypress'
           , 'keyup'
           , 'click'
           , 'change'
@@ -201,7 +202,7 @@
         return this;
     };
 
-    function bindAutoBox(s) {
+    function autoboxBind(s) {
         var o = findTEXTAREA(this) ;
         s || (s={});
         o
@@ -248,7 +249,10 @@
         // Collection methods.
         $.fn.autobox     = autoBox     ;
         $.fn.autoboxOn   = autoBoxOn   ;
-        $.fn.bindAutobox = bindAutoBox ;
+        $.fn.autoboxBind = autoboxBind ;
+
+        // Alias
+        $.fn.bindAutobox = autoboxBind ;
 
         // Static method.
         $.autobox = function(elements, options) {

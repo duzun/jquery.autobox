@@ -2,7 +2,7 @@
   "name": "jquery.autobox",
   "title": "Autogrow Textareas while typing",
   "description": "Resize the textarea (vertically or horizontally) automatically to fit the contents",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "homepage": "https://github.com/duzun/jquery.autobox",
   "author": {
     "name": "Dumitru Uzun",
@@ -23,5 +23,10 @@
   "dependencies": {
     "jquery": "1.7"
   },
-  "keywords": ["textarea","autoresize","vertically","horizontally"]
+  "keywords": [
+    "textarea",
+    "autoresize",
+    "vertically",
+    "horizontally"
+  ]
 }

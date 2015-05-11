@@ -7,7 +7,7 @@
  * $().
  *    autobox()        - Adjust Height/Width of all TEXTAREAs in this and it's descendants
  *    autoboxOn(sel)   - Bind Auto Height/Width Adjustment events to matched element, listening on sel events
- *    bindAutobox()    - Bind Auto Height/Width Adjustment events to all TEXTAREAs in this and it's descendants
+ *    autoboxBind()    - Bind Auto Height/Width Adjustment events to all TEXTAREAs in this and it's descendants
  *
  *
  * https://github.com/duzun/jquery.autobox
@@ -15,7 +15,7 @@
  * Copyright (c) 2015 Dumitru Uzun
  *
  *  @license The MIT license.
- *  @version 2.0.0
+ *  @version 2.1.0
  *  @author DUzun.Me
  */
 
@@ -27,7 +27,8 @@
     ,   namespace = '.dynSiz'
 
     ,   _events = [
-            'keypress'
+            'autobox'
+          , 'keypress'
           , 'keyup'
           , 'click'
           , 'change'
@@ -212,7 +213,7 @@
         return this;
     };
 
-    function bindAutoBox(s) {
+    function autoboxBind(s) {
         var o = findTEXTAREA(this) ;
         s || (s={});
         o
@@ -259,7 +260,10 @@
         // Collection methods.
         $.fn.autobox     = autoBox     ;
         $.fn.autoboxOn   = autoBoxOn   ;
-        $.fn.bindAutobox = bindAutoBox ;
+        $.fn.autoboxBind = autoboxBind ;
+
+        // Alias
+        $.fn.bindAutobox = autoboxBind ;
 
         // Static method.
         $.autobox = function(elements, options) {
