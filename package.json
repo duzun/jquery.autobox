@@ -39,6 +39,7 @@
   },
   "verup": {
     "files": [
+      "bower.json",
       "src/jquery.autobox.js"
     ]
   },
