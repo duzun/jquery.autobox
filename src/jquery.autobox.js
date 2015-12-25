@@ -2,11 +2,11 @@
  * Autogrow Textareas
  * jQuery.autobox
  *
- * Ussage:
+ * Usage:
  *
  * $().
  *    autobox()        - Adjust Height/Width of all TEXTAREAs in this and it's descendants
- *    autoboxOn(sel)   - Bind Auto Height/Width Adjustment events to matched element, listening on sel events
+ *    autoboxOn(sel)   - Bind Auto Height/Width Adjustment events to matched element, listening on sel elements
  *    autoboxBind()    - Bind Auto Height/Width Adjustment events to all TEXTAREAs in this and it's descendants
  *
  *
@@ -15,8 +15,8 @@
  * Copyright (c) 2015 Dumitru Uzun
  *
  *  @license The MIT license.
- *  @version 2.1.0
- *  @author DUzun.Me
+ *  @version 2.1.1
+ * @author DUzun.Me
  */
 
 ;(function(window) {
@@ -38,6 +38,19 @@
         ]
     ;
 
+    // Constants for internal use
+    var RESIZE_VERTICAL_FLAG   = 1
+    ,   RESIZE_HORIZONTAL_FLAG = 2
+
+    ,   ROWS_POS       = 0
+    ,   COLS_POS       = 1
+    ,   HEIGHT_POS     = 2
+    ,   WIDTH_POS      = 3
+    ,   OVERFLOW_Y_POS = 4
+    ,   OVERFLOW_X_POS = 5
+    ,   RESIZE_POS     = 6
+    ;
+
     function taMH(h,i) {
         if ( !h || ( (i=parseInt(h, 10)) && i < 18 ) ) {
             h = '18px';
@@ -53,15 +66,15 @@
     ,   cchChkWidth
     ,   cchChkHeight
     ;
-    function chkSize(save) {
-        var t = $(this)
-        ,   s = t.get(0)
+    function chkSize(s, save) {
+        var t = $(s)
         ,   w = t.outerWidth()
         ,   h = t.outerHeight()
         ;
+        s = t.get(0);
         if ( save ) {
             if ( cchChkElement && cchChkElement !== s ) {
-                chkSize.call(cchChkElement);
+                chkSize(cchChkElement);
             }
             cchChkWidth   = w;
             cchChkHeight  = h;
@@ -79,10 +92,11 @@
         }
     }
 
-    function taBoxAdj(e) {
+    function taBoxAdj() {
         var t  = this
         ,   o  = $(t)
         ,   d  = o.data()
+        ,   e  = d._ab_origs
         ,   s  = t.style
         ,   ol = o.val()
         ,   v  = ol.split('\n')
@@ -92,60 +106,84 @@
         ,   r, i, l
         ;
 
-        chkSize.call(o, true);
+        chkSize(o, true);
 
         for ( i=0,r=v.length; i<r; i++ ) {
             if ( (l=v[i].length) > c ) {
                 c = l;
             }
         }
-        if ( !d._ab_origs ) {
+
+        // On first call, backup original metric properties
+        if ( !e ) {
+            // Can't init when hidden - all metrics are zero
+            if ( o.is(':hidden') ) {
+                return;
+            }
             o.stop(true);
-            d = d._ab_origs = [ar,ac,s.height||o.css('height'),s.width||o.css('width'),o.css('overflow-y'),o.css('overflow-x'),o.css('resize')];
-            d.aw = o.attr('width');
-            d.ah = o.attr('height');
+            e = d._ab_origs = [
+                ar
+              , ac
+              , s.height || o.css('height')
+              , s.width  || o.css('width')
+              , o.css('overflow-y')
+              , o.css('overflow-x')
+              , o.css('resize')
+            ];
+            e.aw = o.attr('width');
+            e.ah = o.attr('height');
             i = 0;
-            if(!d.ah) { i |= 1; }
-            if(!d.aw) { i |= 2; }
-            if(i === 0 || i === 3) { // use ar
-                switch(o.prop('resize') || o.attr('resize') || d[6]) {
-                    case 'vertical':   i = 1; break;
-                    case 'horizontal': i = 2; break;
+            if(!e.ah) { i |= RESIZE_VERTICAL_FLAG;   }
+            if(!e.aw) { i |= RESIZE_HORIZONTAL_FLAG; }
+
+            // use ar
+            if( i === 0 || i === (RESIZE_VERTICAL_FLAG | RESIZE_HORIZONTAL_FLAG) ) {
+                switch(o.prop('resize') || o.attr('resize') || e[RESIZE_POS]) {
+                    case 'vertical':   i = RESIZE_VERTICAL_FLAG  ; break;
+                    case 'horizontal': i = RESIZE_HORIZONTAL_FLAG; break;
                 }
             }
-            if ( d.ar = i ) {
-                if(i === 1) { o.css({'overflow-y':'hidden'}); !d.aw && (d.aw = d[3]); delete d.ah; }
-                if(i === 2) { o.css({'overflow-x':'hidden'}); !d.ah && (d.ah = d[2]); delete d.aw; }
-                o.css({'resize':'none'});
+            if ( e.ar = i ) {
+                if(i === RESIZE_VERTICAL_FLAG  ) { o.css('overflow-y', 'hidden'); !e.aw && (e.aw = e[WIDTH_POS]);  delete e.ah; }
+                if(i === RESIZE_HORIZONTAL_FLAG) { o.css('overflow-x', 'hidden'); !e.ah && (e.ah = e[HEIGHT_POS]); delete e.aw; }
+                o.css('resize', 'none');
             }
             // Ensure data is saved
-            o.data('_ab_origs', d);
+            o.data('_ab_origs', e);
         }
+
+        // Not first call
         else {
-            d = d._ab_origs;
-            delete d.rest;
+            e = d._ab_origs;
+            delete e.rest;
         }
 
         ol = ol.length;
-        v = d.ah || 'auto';
-        l = d.aw || 'auto';
-        d.nadj = ~d.ar & 1;
+        v = e.ah || 'auto';
+        l = e.aw || 'auto';
+        e.nadj = ~e.ar & RESIZE_VERTICAL_FLAG;
 
         if(!c) {
-            if(r <= 1) { r = d[0]; v = d[2]; d.nadj = true; }
-            else { r++; }
-            c = d[1];
-            l = d[3];
-            (d.ar & 1) && o.prop('rows', r);
+            if(r <= 1) {
+                r = e[ROWS_POS];
+                v = e[HEIGHT_POS];
+                e.nadj = true;
+            }
+            else {
+                r++;
+            }
+            c = e[COLS_POS];
+            l = e[WIDTH_POS];
+            (e.ar & RESIZE_VERTICAL_FLAG) && o.prop('rows', r);
         }
         else {
             c += 5 + (c>>4);
             r += ar > 2 || r > 1;
-            (r > ar || ol < d.tl && (d.ar & 1)) && o.prop('rows', r);
+            (r > ar || ol < e.tl && (e.ar & RESIZE_VERTICAL_FLAG)) && o.prop('rows', r);
         }
-        (d.ar & 2) && o.prop('cols', c).prop('size', c);
+        (e.ar & RESIZE_HORIZONTAL_FLAG) && o.prop('cols', c).prop('size', c);
         o.css({'height':taMH(v),'width':l});
-        d.tl = ol;
+        e.tl = ol;
 
         function adjRows() {
             if(!o.data('_ab_origs')) return;
@@ -173,11 +211,12 @@
                 }
             }
             // if need to adjust height and it changed, try to change it after a delay
-            if(a > 5 && ih != h) setTimeout(adjRows, 11);
+            if(a > 5 && ih != h) setTimeout(adjRows, 16);
 
-            chkSize.call(o);
+            chkSize(o);
         }
-        d.nadj ? chkSize.call(o) : adjRows();
+
+        e.nadj ? chkSize(o) : adjRows();
     };
 
     function taRestoreBox(e) {
@@ -188,22 +227,30 @@
             e.rest = true;
             setTimeout(function () {
                 if(!e.rest) return;
-                chkSize.call(o, true);
+                chkSize(o, true);
                 o.removeData('_ab_origs')
-                 .prop('rows', e[0])
-                 .prop('cols', e[1])
-                 .prop('size', e[1])
-                 .css({'overflow-y': e[4], 'overflow-x': e[5], 'resize':e[6]}),
-                e = {'height':taMH(e[2]),'width':e[3]};
+                 .prop('rows', e[ROWS_POS]) // for textarea
+                 .prop('cols', e[COLS_POS]) // for textarea
+                 .prop('size', e[COLS_POS]) // for input
+                 .css({
+                    'overflow-y': e[OVERFLOW_Y_POS]
+                  , 'overflow-x': e[OVERFLOW_X_POS]
+                  , 'resize'    : e[RESIZE_POS]
+                });
+                e = {
+                    'height': taMH(e[HEIGHT_POS])
+                  , 'width' : e[WIDTH_POS]
+                };
 
                 if(d.speed) {
                     o.animate(e, d.speed, function () {
-                        chkSize.call(o);
-                    })
-                } else {
-                    chkSize.call(o.css(e));
+                        chkSize(o);
+                    });
                 }
-            }, d.delay||10)
+                else {
+                    chkSize(o.css(e));
+                }
+            }, d.delay||16);
         }
     };
 
@@ -218,10 +265,10 @@
         s || (s={});
         o
          .addClass(autoboxedClass)
-         .unbind(namespace)
+         .unbind(namespace);
         $.each(_events, function (i,e) {
             o.bind(e+namespace, taBoxAdj);
-        })
+        });
         if ( !s.permanent ) {
             o.bind('blur'+namespace, s, taRestoreBox) ;
         }
