@@ -15,7 +15,7 @@
  * Copyright (c) 2015 Dumitru Uzun
  *
  *  @license The MIT license.
- *  @version 2.2.0
+ *  @version 2.2.1
  * @author DUzun.Me
  */
 
@@ -262,7 +262,7 @@
 
     function autoboxBind(s) {
         var o = findTEXTAREA(this) ;
-        s || (s={});
+        s = $.extend({}, $.autobox.options, s);
         o
          .addClass(autoboxedClass)
          .off(namespace);
@@ -277,7 +277,7 @@
 
     function autoBoxOn(sel, s) {
         var o = this;
-        s   || (s={});
+        s = $.extend({}, $.autobox.options, s);
         sel || (sel = TEXTAREA);
         o.off(namespace, sel)
          .addClass(autoboxedClass)
