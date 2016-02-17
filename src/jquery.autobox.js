@@ -15,7 +15,7 @@
  * Copyright (c) 2015 Dumitru Uzun
  *
  *  @license The MIT license.
- *  @version 2.1.1
+ *  @version 2.2.0
  * @author DUzun.Me
  */
 
@@ -250,7 +250,7 @@
                 else {
                     chkSize(o.css(e));
                 }
-            }, d.delay||16);
+            }, d.delay||250); // bigger delay to allow for clicks on element beneath textarea
         }
     };
 
@@ -265,12 +265,12 @@
         s || (s={});
         o
          .addClass(autoboxedClass)
-         .unbind(namespace);
+         .off(namespace);
         $.each(_events, function (i,e) {
-            o.bind(e+namespace, taBoxAdj);
+            o.on(e+namespace, taBoxAdj);
         });
         if ( !s.permanent ) {
-            o.bind('blur'+namespace, s, taRestoreBox) ;
+            o.on('blur'+namespace, s, taRestoreBox);
         }
         return this;
     };

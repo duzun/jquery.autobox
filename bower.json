@@ -1,6 +1,6 @@
 {
   "name": "jquery.autobox",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Resize the textarea (vertically or horizontally) automatically to fit the contents",
   "author": {
     "name": "Dumitru Uzun",

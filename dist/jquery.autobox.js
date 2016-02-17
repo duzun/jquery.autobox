@@ -2,10 +2,10 @@
  *
  * https://github.com/duzun/jquery.autobox
  *
- * Copyright (c) 2015 Dumitru Uzun
+ * Copyright (c) 2016 Dumitru Uzun
  *
  * @license MIT
- * @version 2.1.1 - 2015-12-25
+ * @version 2.2.0 - 2016-02-17
  * @author DUzun.Me
  */
 ;(function(window) {
@@ -239,7 +239,7 @@
                 else {
                     chkSize(o.css(e));
                 }
-            }, d.delay||16);
+            }, d.delay||250); // bigger delay to allow for clicks on element beneath textarea
         }
     };
 
@@ -254,12 +254,12 @@
         s || (s={});
         o
          .addClass(autoboxedClass)
-         .unbind(namespace);
+         .off(namespace);
         $.each(_events, function (i,e) {
-            o.bind(e+namespace, taBoxAdj);
+            o.on(e+namespace, taBoxAdj);
         });
         if ( !s.permanent ) {
-            o.bind('blur'+namespace, s, taRestoreBox) ;
+            o.on('blur'+namespace, s, taRestoreBox);
         }
         return this;
     };
