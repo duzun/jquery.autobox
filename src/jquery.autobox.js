@@ -12,10 +12,10 @@
  *
  * https://github.com/duzun/jquery.autobox
  *
- * Copyright (c) 2015 Dumitru Uzun
+ * Copyright (c) 2016 Dumitru Uzun
  *
  *  @license The MIT license.
- *  @version 2.2.1
+ *  @version 2.2.2
  * @author DUzun.Me
  */
 
@@ -144,9 +144,18 @@
                 }
             }
             if ( e.ar = i ) {
-                if(i === RESIZE_VERTICAL_FLAG  ) { o.css('overflow-y', 'hidden'); !e.aw && (e.aw = e[WIDTH_POS]);  delete e.ah; }
-                if(i === RESIZE_HORIZONTAL_FLAG) { o.css('overflow-x', 'hidden'); !e.ah && (e.ah = e[HEIGHT_POS]); delete e.aw; }
-                o.css('resize', 'none');
+                var css = { resize: 'none' };
+                if(i === RESIZE_VERTICAL_FLAG  ) {
+                    css['overflow-y'] = 'hidden';
+                    !e.aw && (e.aw = e[WIDTH_POS]);
+                    delete e.ah;
+                }
+                if(i === RESIZE_HORIZONTAL_FLAG) {
+                    css['overflow-x'] = 'hidden';
+                    !e.ah && (e.ah = e[HEIGHT_POS]);
+                    delete e.aw;
+                }
+                o.css(css);
             }
             // Ensure data is saved
             o.data('_ab_origs', e);
@@ -205,6 +214,7 @@
                     a = s - h;
                     // If rows changed but height not, seems there is some limitation on height (ex max-height)
                     if(ir != t.rows && ih == h) {
+                        o.css('overflow-y', '');
                         o.prop('rows', ir);
                         break;
                     }
@@ -217,7 +227,7 @@
         }
 
         e.nadj ? chkSize(o) : adjRows();
-    };
+    }
 
     function taRestoreBox(e) {
         var o = $(this)
@@ -252,13 +262,13 @@
                 }
             }, d.delay||250); // bigger delay to allow for clicks on element beneath textarea
         }
-    };
+    }
 
     function autoBox() {
         var o = findTEXTAREA(this) ;
         o.each(taBoxAdj);
         return this;
-    };
+    }
 
     function autoboxBind(s) {
         var o = findTEXTAREA(this) ;
@@ -273,7 +283,7 @@
             o.on('blur'+namespace, s, taRestoreBox);
         }
         return this;
-    };
+    }
 
     function autoBoxOn(sel, s) {
         var o = this;
@@ -285,13 +295,15 @@
             _events.join(namespace+' ')+namespace
             , sel
             , taBoxAdj
-          );
+          )
+        ;
 
         if ( !s.permanent ) {
             o.on('blur'+namespace+' '+'focusout'+namespace, sel, s, taRestoreBox) ;
         }
-        return this;
-    };
+
+        return o;
+    }
 
   // Export:
     // ---------------------------------------------------------------------------
@@ -334,5 +346,3 @@
     });
 }
 (this));
-
-
