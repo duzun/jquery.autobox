@@ -17,6 +17,7 @@
     "vertically",
     "horizontally"
   ],
+  "reveal": true,
   "author": {
     "name": "Dumitru Uzun",
     "email": "contact@duzun.me",
