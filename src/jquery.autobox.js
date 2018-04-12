@@ -7,7 +7,7 @@
  * Copyright (c) 2018 Dumitru Uzun
  *
  *  @license The MIT license.
- *  @version 2.2.2
+ *  @version 3.0.1
  *  @author DUzun.Me
  */
 

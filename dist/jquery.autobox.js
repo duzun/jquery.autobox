@@ -1,47 +1,62 @@
-/** Autogrow Textareas while typing
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define('jqueryAutobox', factory) :
+	(global.jqueryAutobox = factory());
+}(this, (function () { 'use strict';
+
+/**
+ * Autogrow Textareas
+ * jQuery.autobox
  *
  * https://github.com/duzun/jquery.autobox
  *
- * Copyright (c) 2016 Dumitru Uzun
+ * Copyright (c) 2018 Dumitru Uzun
  *
- * @license MIT
- * @version 2.2.2 - 2016-07-08
- * @author DUzun.Me
+ *  @license The MIT license.
+ *  @version 3.0.1
+ *  @author DUzun.Me
  */
-;(function(window) {
-    'use strict';
 
-    var TEXTAREA = 'TEXTAREA'
-    ,   autoboxedClass = 'autoboxed'
-    ,   namespace = '.dynSiz'
+/**
+ *
+ * Usage:
+ *
+ * $().
+ *    autobox()        - Adjust Height/Width of all TEXTAREAs in this and it's descendants
+ *    autoboxOn(sel)   - Bind Auto Height/Width Adjustment events to matched element, listening on sel elements
+ *    autoboxBind()    - Bind Auto Height/Width Adjustment events to all TEXTAREAs in this and it's descendants
+ */
 
-    ,   _events = [
-            'autobox'
-          , 'keypress'
-          , 'keyup'
-          , 'click'
-          , 'change'
-          , 'focusin'
-          , 'cut'
-          , 'paste'
-        ]
-    ;
+/*jshint
+    esversion: 6,
+    browser: true
+*/
 
-    // Constants for internal use
-    var RESIZE_VERTICAL_FLAG   = 1
-    ,   RESIZE_HORIZONTAL_FLAG = 2
+var TEXTAREA = 'TEXTAREA';
+var autoboxedClass = 'autoboxed';
+var namespace = '.dynSiz';
 
-    ,   ROWS_POS       = 0
-    ,   COLS_POS       = 1
-    ,   HEIGHT_POS     = 2
-    ,   WIDTH_POS      = 3
-    ,   OVERFLOW_Y_POS = 4
-    ,   OVERFLOW_X_POS = 5
-    ,   RESIZE_POS     = 6
-    ;
+var _events = ['autobox', 'keypress', 'keyup', 'click', 'change', 'focusin', 'cut', 'paste'];
 
-    function taMH(h,i) {
-        if ( !h || ( (i=parseInt(h, 10)) && i < 18 ) ) {
+// Constants for internal use
+var RESIZE_VERTICAL_FLAG = 1;
+var RESIZE_HORIZONTAL_FLAG = 2;
+
+var ROWS_POS = 0;
+var COLS_POS = 1;
+var HEIGHT_POS = 2;
+var WIDTH_POS = 3;
+var OVERFLOW_Y_POS = 4;
+var OVERFLOW_X_POS = 5;
+var RESIZE_POS = 6;
+
+function init($) {
+    var cchChkElement;
+    var cchChkWidth;
+    var cchChkHeight;
+
+    function taMH(h, i) {
+        if (!h || (i = parseInt(h, 10)) && i < 18) {
             h = '18px';
         }
         return h;
@@ -51,29 +66,23 @@
         return ctx.filter(TEXTAREA).add(ctx.find(TEXTAREA));
     }
 
-    var cchChkElement
-    ,   cchChkWidth
-    ,   cchChkHeight
-    ;
     function chkSize(s, save) {
-        var t = $(s)
-        ,   w = t.outerWidth()
-        ,   h = t.outerHeight()
-        ;
+        var t = $(s),
+            w = t.outerWidth(),
+            h = t.outerHeight();
         s = t.get(0);
-        if ( save ) {
-            if ( cchChkElement && cchChkElement !== s ) {
+        if (save) {
+            if (cchChkElement && cchChkElement !== s) {
                 chkSize(cchChkElement);
             }
-            cchChkWidth   = w;
-            cchChkHeight  = h;
+            cchChkWidth = w;
+            cchChkHeight = h;
             cchChkElement = s;
-        }
-        else {
-            if ( cchChkElement === s ) {
-                if ( cchChkHeight != h || cchChkWidth != w ) {
+        } else {
+            if (cchChkElement === s) {
+                if (cchChkHeight != h || cchChkWidth != w) {
                     t.trigger('resize');
-                    cchChkWidth  = w;
+                    cchChkWidth = w;
                     cchChkHeight = h;
                     return true;
                 }
@@ -82,64 +91,63 @@
     }
 
     function taBoxAdj() {
-        var t  = this
-        ,   o  = $(t)
-        ,   d  = o.data()
-        ,   e  = d._ab_origs
-        ,   s  = t.style
-        ,   ol = o.val()
-        ,   v  = ol.split('\n')
-        ,   ar = o.prop('rows')
-        ,   ac = o.prop('cols')
-        ,   c  = 0
-        ,   r, i, l
-        ;
+        var t = this,
+            o = $(t),
+            d = o.data(),
+            e = d._ab_origs,
+            s = t.style,
+            ol = o.val(),
+            v = ol.split('\n'),
+            ar = o.prop('rows'),
+            ac = o.prop('cols'),
+            c = 0,
+            r,
+            i,
+            l;
 
         chkSize(o, true);
 
-        for ( i=0,r=v.length; i<r; i++ ) {
-            if ( (l=v[i].length) > c ) {
+        for (i = 0, r = v.length; i < r; i++) {
+            if ((l = v[i].length) > c) {
                 c = l;
             }
         }
 
         // On first call, backup original metric properties
-        if ( !e ) {
+        if (!e) {
             // Can't init when hidden - all metrics are zero
-            if ( o.is(':hidden') ) {
+            if (o.is(':hidden')) {
                 return;
             }
             o.stop(true);
-            e = d._ab_origs = [
-                ar
-              , ac
-              , s.height || o.css('height')
-              , s.width  || o.css('width')
-              , o.css('overflow-y')
-              , o.css('overflow-x')
-              , o.css('resize')
-            ];
+            e = d._ab_origs = [ar, ac, s.height || o.css('height'), s.width || o.css('width'), o.css('overflow-y'), o.css('overflow-x'), o.css('resize')];
             e.aw = o.attr('width');
             e.ah = o.attr('height');
             i = 0;
-            if(!e.ah) { i |= RESIZE_VERTICAL_FLAG;   }
-            if(!e.aw) { i |= RESIZE_HORIZONTAL_FLAG; }
+            if (!e.ah) {
+                i |= RESIZE_VERTICAL_FLAG;
+            }
+            if (!e.aw) {
+                i |= RESIZE_HORIZONTAL_FLAG;
+            }
 
             // use ar
-            if( i === 0 || i === (RESIZE_VERTICAL_FLAG | RESIZE_HORIZONTAL_FLAG) ) {
-                switch(o.prop('resize') || o.attr('resize') || e[RESIZE_POS]) {
-                    case 'vertical':   i = RESIZE_VERTICAL_FLAG  ; break;
-                    case 'horizontal': i = RESIZE_HORIZONTAL_FLAG; break;
+            if (i === 0 || i === (RESIZE_VERTICAL_FLAG | RESIZE_HORIZONTAL_FLAG)) {
+                switch (o.prop('resize') || o.attr('resize') || e[RESIZE_POS]) {
+                    case 'vertical':
+                        i = RESIZE_VERTICAL_FLAG;break;
+                    case 'horizontal':
+                        i = RESIZE_HORIZONTAL_FLAG;break;
                 }
             }
-            if ( e.ar = i ) {
+            if (e.ar = i) {
                 var css = { resize: 'none' };
-                if(i === RESIZE_VERTICAL_FLAG  ) {
+                if (i === RESIZE_VERTICAL_FLAG) {
                     css['overflow-y'] = 'hidden';
                     !e.aw && (e.aw = e[WIDTH_POS]);
                     delete e.ah;
                 }
-                if(i === RESIZE_HORIZONTAL_FLAG) {
+                if (i === RESIZE_HORIZONTAL_FLAG) {
                     css['overflow-x'] = 'hidden';
                     !e.ah && (e.ah = e[HEIGHT_POS]);
                     delete e.aw;
@@ -152,57 +160,54 @@
 
         // Not first call
         else {
-            e = d._ab_origs;
-            delete e.rest;
-        }
+                e = d._ab_origs;
+                delete e.rest;
+            }
 
         ol = ol.length;
         v = e.ah || 'auto';
         l = e.aw || 'auto';
         e.nadj = ~e.ar & RESIZE_VERTICAL_FLAG;
 
-        if(!c) {
-            if(r <= 1) {
+        if (!c) {
+            if (r <= 1) {
                 r = e[ROWS_POS];
                 v = e[HEIGHT_POS];
                 e.nadj = true;
-            }
-            else {
+            } else {
                 r++;
             }
             c = e[COLS_POS];
             l = e[WIDTH_POS];
-            (e.ar & RESIZE_VERTICAL_FLAG) && o.prop('rows', r);
-        }
-        else {
-            c += 5 + (c>>4);
+            e.ar & RESIZE_VERTICAL_FLAG && o.prop('rows', r);
+        } else {
+            c += 5 + (c >> 4);
             r += ar > 2 || r > 1;
-            (r > ar || ol < e.tl && (e.ar & RESIZE_VERTICAL_FLAG)) && o.prop('rows', r);
+            (r > ar || ol < e.tl && e.ar & RESIZE_VERTICAL_FLAG) && o.prop('rows', r);
         }
-        (e.ar & RESIZE_HORIZONTAL_FLAG) && o.prop('cols', c).prop('size', c);
-        o.css({'height':taMH(v),'width':l});
+        e.ar & RESIZE_HORIZONTAL_FLAG && o.prop('cols', c).prop('size', c);
+        o.css({ 'height': taMH(v), 'width': l });
         e.tl = ol;
 
         function adjRows() {
-            if(!o.data('_ab_origs')) return;
+            if (!o.data('_ab_origs')) return;
             ar = t.rows;
-            var s = t.scrollHeight
-            ,   h = t.offsetHeight
-            ,   d = 0
-            ,   a = s - h
-            ,   ih = h
-            ,   ir = ar
-            ;
-            for(;d != a && s && h;) {
+            var s = t.scrollHeight,
+                h = t.offsetHeight,
+                d = 0,
+                a = s - h,
+                ih = h,
+                ir = ar;
+            for (; d != a && s && h;) {
                 // if(d == a || !s || !h) break;
                 d = a;
-                if(a > 0) {
-                    o.prop('rows', Math.max(++ar, (s*ar/h>>0)-1, r));
+                if (a > 0) {
+                    o.prop('rows', Math.max(++ar, (s * ar / h >> 0) - 1, r));
                     s = t.scrollHeight;
                     h = t.offsetHeight;
                     a = s - h;
                     // If rows changed but height not, seems there is some limitation on height (ex max-height)
-                    if(ir != t.rows && ih == h) {
+                    if (ir != t.rows && ih == h) {
                         o.css('overflow-y', '');
                         o.prop('rows', ir);
                         break;
@@ -210,7 +215,7 @@
                 }
             }
             // if need to adjust height and it changed, try to change it after a delay
-            if(a > 5 && ih != h) setTimeout(adjRows, 16);
+            if (a > 5 && ih != h) setTimeout(adjRows, 16);
 
             chkSize(o);
         }
@@ -219,57 +224,52 @@
     }
 
     function taRestoreBox(e) {
-        var o = $(this)
-        ,   d = e.data
-        ;
-        if(e=o.data('_ab_origs')) {
+        var o = $(this),
+            d = e.data;
+        if (e = o.data('_ab_origs')) {
             e.rest = true;
             setTimeout(function () {
-                if(!e.rest) return;
+                if (!e.rest) return;
                 chkSize(o, true);
-                o.removeData('_ab_origs')
-                 .prop('rows', e[ROWS_POS]) // for textarea
-                 .prop('cols', e[COLS_POS]) // for textarea
-                 .prop('size', e[COLS_POS]) // for input
-                 .css({
-                    'overflow-y': e[OVERFLOW_Y_POS]
-                  , 'overflow-x': e[OVERFLOW_X_POS]
-                  , 'resize'    : e[RESIZE_POS]
+                o.removeData('_ab_origs').prop('rows', e[ROWS_POS]) // for textarea
+                .prop('cols', e[COLS_POS]) // for textarea
+                .prop('size', e[COLS_POS]) // for input
+                .css({
+                    'overflow-y': e[OVERFLOW_Y_POS],
+                    'overflow-x': e[OVERFLOW_X_POS],
+                    'resize': e[RESIZE_POS]
                 });
                 e = {
-                    'height': taMH(e[HEIGHT_POS])
-                  , 'width' : e[WIDTH_POS]
+                    'height': taMH(e[HEIGHT_POS]),
+                    'width': e[WIDTH_POS]
                 };
 
-                if(d.speed) {
+                if (d.speed) {
                     o.animate(e, d.speed, function () {
                         chkSize(o);
                     });
-                }
-                else {
+                } else {
                     chkSize(o.css(e));
                 }
-            }, d.delay||250); // bigger delay to allow for clicks on element beneath textarea
+            }, d.delay || 250); // bigger delay to allow for clicks on element beneath textarea
         }
     }
 
     function autoBox() {
-        var o = findTEXTAREA(this) ;
+        var o = findTEXTAREA(this);
         o.each(taBoxAdj);
         return this;
     }
 
     function autoboxBind(s) {
-        var o = findTEXTAREA(this) ;
+        var o = findTEXTAREA(this);
         s = $.extend({}, $.autobox.options, s);
-        o
-         .addClass(autoboxedClass)
-         .off(namespace);
-        $.each(_events, function (i,e) {
-            o.on(e+namespace, taBoxAdj);
+        o.addClass(autoboxedClass).off(namespace);
+        $.each(_events, function (i, e) {
+            o.on(e + namespace, taBoxAdj);
         });
-        if ( !s.permanent ) {
-            o.on('blur'+namespace, s, taRestoreBox);
+        if (!s.permanent) {
+            o.on('blur' + namespace, s, taRestoreBox);
         }
         return this;
     }
@@ -278,60 +278,52 @@
         var o = this;
         s = $.extend({}, $.autobox.options, s);
         sel || (sel = TEXTAREA);
-        o.off(namespace, sel)
-         .addClass(autoboxedClass)
-         .on(
-            _events.join(namespace+' ')+namespace
-            , sel
-            , taBoxAdj
-          )
-        ;
+        o.off(namespace, sel).addClass(autoboxedClass).on(_events.join(namespace + ' ') + namespace, sel, taBoxAdj);
 
-        if ( !s.permanent ) {
-            o.on('blur'+namespace+' '+'focusout'+namespace, sel, s, taRestoreBox) ;
+        if (!s.permanent) {
+            o.on('blur' + namespace + ' ' + 'focusout' + namespace, sel, s, taRestoreBox);
         }
 
         return o;
     }
 
-  // Export:
-    // ---------------------------------------------------------------------------
-    var $ = window.jQuery || window.Zepto ;
-    (typeof define !== 'function' || !define.amd
-        ? typeof module == 'undefined' || !module.exports
-            ? function (deps, factory) { factory($); } // Browser
-            : function (deps, factory) { module.exports = factory($||require('jquery')); } // CommonJs
-        : define // AMD
-    )
-    /*define*/(/*name, */[$?null:'jquery'], function factory($) {
+    // Export:
 
-        // Collection methods.
-        $.fn.autobox     = autoBox     ;
-        $.fn.autoboxOn   = autoBoxOn   ;
-        $.fn.autoboxBind = autoboxBind ;
+    // Collection methods.
+    $.fn.autobox = autoBox;
+    $.fn.autoboxOn = autoBoxOn;
+    $.fn.autoboxBind = autoboxBind;
 
-        // Alias
-        $.fn.bindAutobox = autoboxBind ;
+    // Alias
+    $.fn.bindAutobox = autoboxBind;
 
-        // Static method.
-        $.autobox = function(elements, options) {
-          // Override default options with passed-in options.
-          options = $.extend({}, $.autobox.options, options);
-          // Return something awesome.
-          return $(elements).call(autoBox);
-        };
+    // Static method.
+    $.autobox = function (elements, options) {
+        // Override default options with passed-in options.
+        options = $.extend({}, $.autobox.options, options);
+        // Return something awesome.
+        return $(elements).call(autoBox);
+    };
 
-        // Static method default options.
-        $.autobox.options = {
-          permanent: false
-        };
+    // Static method default options.
+    $.autobox.options = {
+        permanent: false
+    };
 
-        // Custom selector.
-        $.expr[':'].autobox = function(elem) {
-          // Is this element awesome?
-          return $(elem).hasClass(autoboxedClass);
-        };
-
-    });
+    // Custom selector.
+    $.expr[':'].autobox = function (elem) {
+        // Is this element awesome?
+        return $(elem).hasClass(autoboxedClass);
+    };
 }
-(this));
+
+if (typeof window !== 'undefined') {
+    var $ = window.jQuery || window.Zepto;
+    if ($) init($);
+}
+
+return init;
+
+})));
+
+//# sourceMappingURL=jquery.autobox.js.map

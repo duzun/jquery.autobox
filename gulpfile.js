@@ -1,8 +1,8 @@
 /**
- * Gulp file for DCMS project.
+ * Gulp file for jquery.autobox project.
  *
  * @author  Dumitru Uzun (DUzun.me)
- * @version  1.5.3
+ * @version  1.0.0
  */
 
 /*jshint
@@ -11,18 +11,10 @@
 */
 
 const fs              = require('fs');
-// const path            = require('path');
 
-// const del             = require('del');
 const requireJSON     = require('require-json5');
-// const streamqueue     = require('streamqueue');
-// const es              = require('event-stream');
-// const runSequence     = require('run-sequence');
 const gulp            = require('gulp');
 const $               = require('gulp-load-plugins')();
-// const packo           = require("./package.json");
-// const { extra } = packo;
-
 
 // -----------------------------------------------------------------------------
 gulp.task('default', ['js', 'js-min']);
@@ -37,7 +29,7 @@ gulp.task('js-min', function task_js() {
 });
 
 // -----------------------------------------------------------------------------
-gulp.task('qunit', function task_qunit() {
+gulp.task('qunit', ['js'], function task_qunit() {
     return gulp.src('test/**/*.html')
         .pipe($.qunit())
     ;
