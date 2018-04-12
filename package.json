@@ -36,7 +36,7 @@
   ],
   "scripts": {
     "verup": "verup",
-    "test": "grunt qunit"
+    "test": "gulp qunit"
   },
   "verup": {
     "files": [
@@ -45,13 +45,21 @@
     ]
   },
   "devDependencies": {
-    "grunt": "^1.x",
-    "grunt-contrib-clean": "^1.x",
-    "grunt-contrib-concat": "^1.x",
-    "grunt-contrib-jshint": "^1.x",
-    "grunt-contrib-qunit": "^1.x",
-    "grunt-contrib-uglify": "^1.x",
-    "grunt-contrib-watch": "^1.x",
+    "babel-loader": "^7.0",
+    "babel-plugin-external-helpers": "^6.22",
+    "babel-preset-env": "^1.5",
+    "babel-register": "^6.24",
+    "gulp": "^3.9",
+    "gulp-babel": "^7.0",
+    "gulp-better-rollup": "^3.1",
+    "gulp-load-plugins": "^1.5",
+    "gulp-plugins": "0.0.18",
+    "gulp-qunit": "^2.0",
+    "gulp-rename": "^1.2",
+    "gulp-sourcemaps": "^2.6",
+    "require-json5": "^1.0",
+    "rollup-plugin-babel": "^3.0",
+    "rollup-plugin-uglify": "^3.0",
     "verup": "^1.3"
   }
 }
