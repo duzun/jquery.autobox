@@ -2,54 +2,62 @@
  * Autogrow Textareas
  * jQuery.autobox
  *
+ * https://github.com/duzun/jquery.autobox
+ *
+ * Copyright (c) 2018 Dumitru Uzun
+ *
+ *  @license The MIT license.
+ *  @version 2.2.2
+ *  @author DUzun.Me
+ */
+
+/**
+ *
  * Usage:
  *
  * $().
  *    autobox()        - Adjust Height/Width of all TEXTAREAs in this and it's descendants
  *    autoboxOn(sel)   - Bind Auto Height/Width Adjustment events to matched element, listening on sel elements
  *    autoboxBind()    - Bind Auto Height/Width Adjustment events to all TEXTAREAs in this and it's descendants
- *
- *
- * https://github.com/duzun/jquery.autobox
- *
- * Copyright (c) 2016 Dumitru Uzun
- *
- *  @license The MIT license.
- *  @version 2.2.2
- * @author DUzun.Me
  */
 
-;(function(window) {
-    'use strict';
+/*jshint
+    esversion: 6,
+    browser: true
+*/
 
-    var TEXTAREA = 'TEXTAREA'
-    ,   autoboxedClass = 'autoboxed'
-    ,   namespace = '.dynSiz'
+const TEXTAREA = 'TEXTAREA';
+const autoboxedClass = 'autoboxed';
+const namespace = '.dynSiz';
 
-    ,   _events = [
-            'autobox'
-          , 'keypress'
-          , 'keyup'
-          , 'click'
-          , 'change'
-          , 'focusin'
-          , 'cut'
-          , 'paste'
-        ]
-    ;
+const _events = [
+        'autobox'
+      , 'keypress'
+      , 'keyup'
+      , 'click'
+      , 'change'
+      , 'focusin'
+      , 'cut'
+      , 'paste'
+    ]
+;
 
-    // Constants for internal use
-    var RESIZE_VERTICAL_FLAG   = 1
-    ,   RESIZE_HORIZONTAL_FLAG = 2
+// Constants for internal use
+const RESIZE_VERTICAL_FLAG   = 1;
+const RESIZE_HORIZONTAL_FLAG = 2;
 
-    ,   ROWS_POS       = 0
-    ,   COLS_POS       = 1
-    ,   HEIGHT_POS     = 2
-    ,   WIDTH_POS      = 3
-    ,   OVERFLOW_Y_POS = 4
-    ,   OVERFLOW_X_POS = 5
-    ,   RESIZE_POS     = 6
-    ;
+const ROWS_POS       = 0;
+const COLS_POS       = 1;
+const HEIGHT_POS     = 2;
+const WIDTH_POS      = 3;
+const OVERFLOW_Y_POS = 4;
+const OVERFLOW_X_POS = 5;
+const RESIZE_POS     = 6;
+
+export default function init($) {
+    var cchChkElement;
+    var cchChkWidth;
+    var cchChkHeight;
 
     function taMH(h,i) {
         if ( !h || ( (i=parseInt(h, 10)) && i < 18 ) ) {
@@ -62,10 +70,6 @@
         return ctx.filter(TEXTAREA).add(ctx.find(TEXTAREA));
     }
 
-    var cchChkElement
-    ,   cchChkWidth
-    ,   cchChkHeight
-    ;
     function chkSize(s, save) {
         var t = $(s)
         ,   w = t.outerWidth()
@@ -305,44 +309,37 @@
         return o;
     }
 
-  // Export:
-    // ---------------------------------------------------------------------------
-    var $ = window.jQuery || window.Zepto ;
-    (typeof define !== 'function' || !define.amd
-        ? typeof module == 'undefined' || !module.exports
-            ? function (deps, factory) { factory($); } // Browser
-            : function (deps, factory) { module.exports = factory($||require('jquery')); } // CommonJs
-        : define // AMD
-    )
-    /*define*/(/*name, */[$?null:'jquery'], function factory($) {
+// Export:
 
-        // Collection methods.
-        $.fn.autobox     = autoBox     ;
-        $.fn.autoboxOn   = autoBoxOn   ;
-        $.fn.autoboxBind = autoboxBind ;
+    // Collection methods.
+    $.fn.autobox     = autoBox     ;
+    $.fn.autoboxOn   = autoBoxOn   ;
+    $.fn.autoboxBind = autoboxBind ;
 
-        // Alias
-        $.fn.bindAutobox = autoboxBind ;
+    // Alias
+    $.fn.bindAutobox = autoboxBind ;
 
-        // Static method.
-        $.autobox = function(elements, options) {
-          // Override default options with passed-in options.
-          options = $.extend({}, $.autobox.options, options);
-          // Return something awesome.
-          return $(elements).call(autoBox);
-        };
+    // Static method.
+    $.autobox = function(elements, options) {
+      // Override default options with passed-in options.
+      options = $.extend({}, $.autobox.options, options);
+      // Return something awesome.
+      return $(elements).call(autoBox);
+    };
 
-        // Static method default options.
-        $.autobox.options = {
-          permanent: false
-        };
+    // Static method default options.
+    $.autobox.options = {
+      permanent: false
+    };
 
-        // Custom selector.
-        $.expr[':'].autobox = function(elem) {
-          // Is this element awesome?
-          return $(elem).hasClass(autoboxedClass);
-        };
-
-    });
+    // Custom selector.
+    $.expr[':'].autobox = function(elem) {
+      // Is this element awesome?
+      return $(elem).hasClass(autoboxedClass);
+    };
 }
-(this));
+
+if ( typeof window !== 'undefined' ) {
+    const $ = window.jQuery || window.Zepto;
+    if ( $ ) init($);
+}

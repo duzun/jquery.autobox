@@ -4,6 +4,11 @@
   "title": "Autogrow Textareas while typing",
   "description": "Resize the textarea (vertically or horizontally) automatically to fit the contents",
   "homepage": "https://github.com/duzun/jquery.autobox",
+  "main": "dist/jquery.autobox.js",
+  "module": "src/jquery.autobox.js",
+  "jsnext:main": "src/jquery.autobox.js",
+  "esnext": "src/jquery.autobox.js",
+  "unpkg": "dist/jquery.autobox.min.js",
   "keywords": [
     "jquery-plugin",
     "ecosystem:jquery",
@@ -36,6 +41,7 @@
   ],
   "scripts": {
     "verup": "verup",
+    "build": "gulp",
     "test": "gulp qunit"
   },
   "verup": {
