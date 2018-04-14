@@ -27,11 +27,7 @@ indent_style = tab
 indent_style = space
 indent_size = 2
 
-[*.tpl]
-indent_style = space
-indent_size = 2
-
-[*.html]
+[*.{html,tpl}]
 indent_style = space
 indent_size = 2
 
