@@ -1,6 +1,6 @@
 {
   "name": "jquery.autobox",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Resize the textarea (vertically or horizontally) automatically to fit the contents",
   "author": {
     "name": "Dumitru Uzun",
@@ -21,7 +21,7 @@
     "horizontally"
   ],
   "license": "MIT",
-  "main": "dist/jquery.autobox.min.js",
+  "main": "dist/jquery.autobox.js",
   "homepage": "https://github.com/duzun/jquery.autobox",
   "ignore": [
     "**/.*",
