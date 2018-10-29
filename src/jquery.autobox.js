@@ -7,7 +7,7 @@
  * Copyright (c) 2018 Dumitru Uzun
  *
  *  @license The MIT license.
- *  @version 3.0.1
+ *  @version 3.0.2
  *  @author DUzun.Me
  */
 
@@ -96,7 +96,7 @@ export default function init($) {
         }
     }
 
-    function taBoxAdj() {
+    function taBoxAdj(evt) {
         var t  = this
         ,   o  = $(t)
         ,   d  = o.data()
@@ -108,6 +108,7 @@ export default function init($) {
         ,   ac = o.prop('cols')
         ,   c  = 0
         ,   r, i, l
+        ,   opt = evt && evt.type && evt.data
         ;
 
         chkSize(o, true);
@@ -142,7 +143,8 @@ export default function init($) {
 
             // use ar
             if( i === 0 || i === (RESIZE_VERTICAL_FLAG | RESIZE_HORIZONTAL_FLAG) ) {
-                switch(o.prop('resize') || o.attr('resize') || e[RESIZE_POS]) {
+                // resize option overrides CSS and DOM property
+                switch(opt && opt.resize || o.prop('resize') || o.attr('resize') || e[RESIZE_POS]) {
                     case 'vertical':   i = RESIZE_VERTICAL_FLAG  ; break;
                     case 'horizontal': i = RESIZE_HORIZONTAL_FLAG; break;
                 }
@@ -240,7 +242,7 @@ export default function init($) {
         if(e=o.data('_ab_origs')) {
             e.rest = true;
             setTimeout(function () {
-                if(!e.rest) return;
+                if(!e.rest) { return; }
                 chkSize(o, true);
                 o.removeData('_ab_origs')
                  .prop('rows', e[ROWS_POS]) // for textarea
@@ -274,36 +276,37 @@ export default function init($) {
         return this;
     }
 
-    function autoboxBind(s) {
+    function autoboxBind(opt) {
         var o = findTEXTAREA(this) ;
-        s = $.extend({}, $.autobox.options, s);
+        opt = $.extend({}, $.autobox.options, opt);
         o
          .addClass(autoboxedClass)
          .off(namespace);
         $.each(_events, function (i,e) {
-            o.on(e+namespace, taBoxAdj);
+            o.on(e+namespace, opt, taBoxAdj);
         });
-        if ( !s.permanent ) {
-            o.on('blur'+namespace, s, taRestoreBox);
+        if ( !opt.permanent ) {
+            o.on('blur'+namespace, opt, taRestoreBox);
         }
         return this;
     }
 
-    function autoBoxOn(sel, s) {
+    function autoBoxOn(sel, opt) {
         var o = this;
-        s = $.extend({}, $.autobox.options, s);
+        opt = $.extend({}, $.autobox.options, opt);
         sel || (sel = TEXTAREA);
         o.off(namespace, sel)
          .addClass(autoboxedClass)
          .on(
             _events.join(namespace+' ')+namespace
             , sel
+            , opt
             , taBoxAdj
           )
         ;
 
-        if ( !s.permanent ) {
-            o.on('blur'+namespace+' '+'focusout'+namespace, sel, s, taRestoreBox) ;
+        if ( !opt.permanent ) {
+            o.on('blur'+namespace+' '+'focusout'+namespace, sel, opt, taRestoreBox) ;
         }
 
         return o;
@@ -329,6 +332,7 @@ export default function init($) {
 
     // Static method default options.
     $.autobox.options = {
+      resize: undefined, // 'vertical' | 'horizontal'
       permanent: false
     };
 
