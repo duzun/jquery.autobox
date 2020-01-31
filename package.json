@@ -40,32 +40,33 @@
     }
   ],
   "scripts": {
-    "verup": "verup",
-    "build": "gulp",
-    "test": "gulp qunit"
+    "verup": "npx verup",
+    "build": "npx gulp",
+    "test": "npx gulp qunit"
   },
-  "verup": {
-    "files": [
-      "bower.json",
-      "package-lock.json",
-      "src/jquery.autobox.js"
-    ]
+  "extra": {
+    "verup": {
+      "files": [
+        "bower.json",
+        "package-lock.json",
+        "src/jquery.autobox.js"
+      ]
+    }
   },
   "devDependencies": {
-    "babel-plugin-external-helpers": "^6.22",
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.24",
-    "gulp": "^3.9",
-    "gulp-babel": "^7.0",
-    "gulp-better-rollup": "^3.4.0",
-    "gulp-load-plugins": "^1.5",
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0",
+    "gulp-better-rollup": "^4.0.1",
+    "gulp-load-plugins": "^2.0",
     "gulp-plugins": "0.0.18",
-    "gulp-qunit": "^2.0.2",
-    "gulp-rename": "^1.4.0",
-    "gulp-sourcemaps": "^2.6",
-    "require-json5": "^1.0",
-    "rollup-plugin-babel": "^3.0.7",
-    "rollup-plugin-uglify": "^3.0",
-    "verup": "^1.7.0"
+    "gulp-qunit": "^2.1.1",
+    "gulp-rename": "^2.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "rollup": "^1.31.0",
+    "rollup-plugin-babel": "^4.0.7",
+    "rollup-plugin-terser": "^5.2.0",
+    "verup": "^1.7.1"
   }
 }

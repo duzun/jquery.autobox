@@ -2,22 +2,16 @@
  * Gulp file for jquery.autobox project.
  *
  * @author  Dumitru Uzun (DUzun.me)
- * @version  1.0.0
+ * @version  2.0.0
  */
 
 /*jshint
     node: true,
-    esversion: 6
+    esversion: 9
 */
 
-const fs              = require('fs');
-
-const requireJSON     = require('require-json5');
-const gulp            = require('gulp');
-const $               = require('gulp-load-plugins')();
-
-// -----------------------------------------------------------------------------
-gulp.task('default', ['js', 'js-min']);
+const gulp = require('gulp');
+const $    = require('gulp-load-plugins')();
 
 // -----------------------------------------------------------------------------
 gulp.task('js', function task_js() {
@@ -29,30 +23,27 @@ gulp.task('js-min', function task_js() {
 });
 
 // -----------------------------------------------------------------------------
-gulp.task('qunit', ['js'], function task_qunit() {
+gulp.task('default', gulp.parallel('js', 'js-min'));
+
+// -----------------------------------------------------------------------------
+gulp.task('qunit', gulp.series('js', function task_qunit() {
     return gulp.src('test/**/*.html')
         .pipe($.qunit())
     ;
-});
+}));
 
-gulp.task('test', ['qunit']);
+gulp.task('test', gulp.series('qunit'));
 
 // -----------------------------------------------------------------------------
-/// Process JS ES6/7 with babel
+/// Process ES with babel
 function procES6(src, base, dest = '', handle_error = false, min = false) {
-    const babelOptions = requireJSON.parse(fs.readFileSync('./.babelrc', 'utf8'));
-    let bo = Object.assign(babelOptions);
-    let bplg = bo.plugins || (bo.plugins = []);
-    bplg.push("external-helpers");
-    bo.exclude = "node_modules/**";
-
     let plugins = [
         // require('rollup-plugin-strip')(),
-        require('rollup-plugin-babel')(bo),
+        require('rollup-plugin-babel')(),
     ];
 
     if ( min ) {
-        plugins.push(require('rollup-plugin-uglify')({
+        plugins.push(require('rollup-plugin-terser').terser({
             output: {
                 comments: function(node, comment) {
                     let { value, type } = comment;
