@@ -4,10 +4,10 @@
  *
  * https://github.com/duzun/jquery.autobox
  *
- * Copyright (c) 2018 Dumitru Uzun
+ * Copyright (c) 2021 Dumitru Uzun
  *
  *  @license The MIT license.
- *  @version 3.0.2
+ *  @version 3.1.0
  *  @author DUzun.Me
  */
 
@@ -16,19 +16,28 @@
  * Usage:
  *
  * $().
- *    autobox()        - Adjust Height/Width of all TEXTAREAs in this and it's descendants
- *    autoboxOn(sel)   - Bind Auto Height/Width Adjustment events to matched element, listening on sel elements
- *    autoboxBind()    - Bind Auto Height/Width Adjustment events to all TEXTAREAs in this and it's descendants
+ *    autobox(options)        - Adjust Height/Width of all TEXTAREAs in this and it's descendants
+ *    autoboxOn(sel, options) - Bind Auto Height/Width Adjustment events to matched element, listening on sel elements
+ *    autoboxBind(options)    - Bind Auto Height/Width Adjustment events to all TEXTAREAs in this and it's descendants
+ *
+ * $.autobox(elements, options) - same as $(elements).autobox(options)
+ *
+ * Options:
+ *  permanent: bool - if false, the textarea would restore its size on blur
+ *  resize: "vertical" | "horizontal" | <empty> - resize mode, leave empty for autodetection
+ *  speed: number - restore height animation speed (default 0 - no animation)
+ *  delay: number - delay before restoring textarea height on blur (default 250 milliseconds)
+ *
  */
 
 /*jshint
-    esversion: 6,
+    esversion: 9,
     browser: true
 */
 
 const TEXTAREA = 'TEXTAREA';
-const autoboxedClass = 'autoboxed';
-const namespace = '.dynSiz';
+const AUTOBOXED_CLASS = 'autoboxed';
+const NAMESPACE = '.dynSiz';
 
 const _events = [
         'autobox'
@@ -54,7 +63,7 @@ const OVERFLOW_Y_POS = 4;
 const OVERFLOW_X_POS = 5;
 const RESIZE_POS     = 6;
 
-export default function init($) {
+export default function initJQAutobox($) {
     var cchChkElement;
     var cchChkWidth;
     var cchChkHeight;
@@ -97,21 +106,21 @@ export default function init($) {
     }
 
     function taBoxAdj(evt) {
-        var t  = this
-        ,   o  = $(t)
-        ,   d  = o.data()
-        ,   e  = d._ab_origs
-        ,   s  = t.style
-        ,   ol = o.val()
+        var that  = this
+        ,   $ta  = $(that)
+        ,   data  = $ta.data()
+        ,   e  = data._ab_origs
+        ,   style  = that.style
+        ,   ol = $ta.val()
         ,   v  = ol.split('\n')
-        ,   ar = o.prop('rows')
-        ,   ac = o.prop('cols')
+        ,   ar = $ta.prop('rows')
+        ,   ac = $ta.prop('cols')
         ,   c  = 0
         ,   r, i, l
-        ,   opt = evt && evt.type && evt.data
+        ,   options = evt && evt.type && evt.data
         ;
 
-        chkSize(o, true);
+        chkSize($ta, true);
 
         for ( i=0,r=v.length; i<r; i++ ) {
             if ( (l=v[i].length) > c ) {
@@ -122,21 +131,21 @@ export default function init($) {
         // On first call, backup original metric properties
         if ( !e ) {
             // Can't init when hidden - all metrics are zero
-            if ( o.is(':hidden') ) {
+            if ( $ta.is(':hidden') ) {
                 return;
             }
-            o.stop(true);
-            e = d._ab_origs = [
+            $ta.stop(true);
+            e = data._ab_origs = [
                 ar
               , ac
-              , s.height || o.css('height')
-              , s.width  || o.css('width')
-              , o.css('overflow-y')
-              , o.css('overflow-x')
-              , o.css('resize')
+              , style.height || $ta.css('height')
+              , style.width  || $ta.css('width')
+              , $ta.css('overflow-y')
+              , $ta.css('overflow-x')
+              , $ta.css('resize')
             ];
-            e.aw = o.attr('width');
-            e.ah = o.attr('height');
+            e.aw = $ta.attr('width');
+            e.ah = $ta.attr('height');
             i = 0;
             if(!e.ah) { i |= RESIZE_VERTICAL_FLAG;   }
             if(!e.aw) { i |= RESIZE_HORIZONTAL_FLAG; }
@@ -144,7 +153,7 @@ export default function init($) {
             // use ar
             if( i === 0 || i === (RESIZE_VERTICAL_FLAG | RESIZE_HORIZONTAL_FLAG) ) {
                 // resize option overrides CSS and DOM property
-                switch(opt && opt.resize || o.prop('resize') || o.attr('resize') || e[RESIZE_POS]) {
+                switch(options && options.resize || $ta.prop('resize') || $ta.attr('resize') || e[RESIZE_POS]) {
                     case 'vertical':   i = RESIZE_VERTICAL_FLAG  ; break;
                     case 'horizontal': i = RESIZE_HORIZONTAL_FLAG; break;
                 }
@@ -161,15 +170,15 @@ export default function init($) {
                     !e.ah && (e.ah = e[HEIGHT_POS]);
                     delete e.aw;
                 }
-                o.css(css);
+                $ta.css(css);
             }
             // Ensure data is saved
-            o.data('_ab_origs', e);
+            $ta.data('_ab_origs', e);
         }
 
         // Not first call
         else {
-            e = d._ab_origs;
+            e = data._ab_origs;
             delete e.rest;
         }
 
@@ -189,22 +198,22 @@ export default function init($) {
             }
             c = e[COLS_POS];
             l = e[WIDTH_POS];
-            (e.ar & RESIZE_VERTICAL_FLAG) && o.prop('rows', r);
+            (e.ar & RESIZE_VERTICAL_FLAG) && $ta.prop('rows', r);
         }
         else {
             c += 5 + (c>>4);
             r += ar > 2 || r > 1;
-            (r > ar || ol < e.tl && (e.ar & RESIZE_VERTICAL_FLAG)) && o.prop('rows', r);
+            (r > ar || ol < e.tl && (e.ar & RESIZE_VERTICAL_FLAG)) && $ta.prop('rows', r);
         }
-        (e.ar & RESIZE_HORIZONTAL_FLAG) && o.prop('cols', c).prop('size', c);
-        o.css({'height':taMH(v),'width':l});
+        (e.ar & RESIZE_HORIZONTAL_FLAG) && $ta.prop('cols', c).prop('size', c);
+        $ta.css({'height':taMH(v),'width':l});
         e.tl = ol;
 
         function adjRows() {
-            if(!o.data('_ab_origs')) return;
-            ar = t.rows;
-            var s = t.scrollHeight
-            ,   h = t.offsetHeight
+            if(!$ta.data('_ab_origs')) return;
+            ar = that.rows;
+            var s = that.scrollHeight
+            ,   h = that.offsetHeight
             ,   d = 0
             ,   a = s - h
             ,   ih = h
@@ -214,14 +223,14 @@ export default function init($) {
                 // if(d == a || !s || !h) break;
                 d = a;
                 if(a > 0) {
-                    o.prop('rows', Math.max(++ar, (s*ar/h>>0)-1, r));
-                    s = t.scrollHeight;
-                    h = t.offsetHeight;
+                    $ta.prop('rows', Math.max(++ar, (s*ar/h>>0)-1, r));
+                    s = that.scrollHeight;
+                    h = that.offsetHeight;
                     a = s - h;
                     // If rows changed but height not, seems there is some limitation on height (ex max-height)
-                    if(ir != t.rows && ih == h) {
-                        o.css('overflow-y', '');
-                        o.prop('rows', ir);
+                    if(ir != that.rows && ih == h) {
+                        $ta.css('overflow-y', '');
+                        $ta.prop('rows', ir);
                         break;
                     }
                 }
@@ -229,15 +238,15 @@ export default function init($) {
             // if need to adjust height and it changed, try to change it after a delay
             if(a > 5 && ih != h) setTimeout(adjRows, 16);
 
-            chkSize(o);
+            chkSize($ta);
         }
 
-        e.nadj ? chkSize(o) : adjRows();
+        e.nadj ? chkSize($ta) : adjRows();
     }
 
     function taRestoreBox(e) {
         var o = $(this)
-        ,   d = e.data
+        ,   options = e.data
         ;
         if(e=o.data('_ab_origs')) {
             e.rest = true;
@@ -258,55 +267,61 @@ export default function init($) {
                   , 'width' : e[WIDTH_POS]
                 };
 
-                if(d.speed) {
-                    o.animate(e, d.speed, function () {
+                if(options.speed) {
+                    o.animate(e, options.speed, function () {
                         chkSize(o);
                     });
                 }
                 else {
                     chkSize(o.css(e));
                 }
-            }, d.delay||250); // bigger delay to allow for clicks on element beneath textarea
+            }, options.delay||250); // bigger delay to allow for clicks on element beneath textarea
         }
     }
 
-    function autoBox() {
+    function autoBox(options) {
         var o = findTEXTAREA(this) ;
-        o.each(taBoxAdj);
+        if (options) {
+            const evt = { type: 'autobox', data: options };
+            o.each((i, e) => taBoxAdj.call(e, evt));
+        }
+        else {
+            o.each(taBoxAdj);
+        }
         return this;
     }
 
-    function autoboxBind(opt) {
+    function autoboxBind(options) {
         var o = findTEXTAREA(this) ;
-        opt = $.extend({}, $.autobox.options, opt);
+        options = $.extend({}, $.autobox.options, options);
         o
-         .addClass(autoboxedClass)
-         .off(namespace);
+         .addClass(AUTOBOXED_CLASS)
+         .off(NAMESPACE);
         $.each(_events, function (i,e) {
-            o.on(e+namespace, opt, taBoxAdj);
+            o.on(e+NAMESPACE, options, taBoxAdj);
         });
-        if ( !opt.permanent ) {
-            o.on('blur'+namespace, opt, taRestoreBox);
+        if ( !options.permanent ) {
+            o.on('blur'+NAMESPACE, options, taRestoreBox);
         }
         return this;
     }
 
-    function autoBoxOn(sel, opt) {
+    function autoBoxOn(sel, options) {
         var o = this;
-        opt = $.extend({}, $.autobox.options, opt);
+        options = $.extend({}, $.autobox.options, options);
         sel || (sel = TEXTAREA);
-        o.off(namespace, sel)
-         .addClass(autoboxedClass)
+        o.off(NAMESPACE, sel)
+         .addClass(AUTOBOXED_CLASS)
          .on(
-            _events.join(namespace+' ')+namespace
+            _events.join(NAMESPACE+' ')+NAMESPACE
             , sel
-            , opt
+            , options
             , taBoxAdj
           )
         ;
 
-        if ( !opt.permanent ) {
-            o.on('blur'+namespace+' '+'focusout'+namespace, sel, opt, taRestoreBox) ;
+        if ( !options.permanent ) {
+            o.on('blur'+NAMESPACE+' '+'focusout'+NAMESPACE, sel, options, taRestoreBox) ;
         }
 
         return o;
@@ -326,24 +341,26 @@ export default function init($) {
     $.autobox = function(elements, options) {
       // Override default options with passed-in options.
       options = $.extend({}, $.autobox.options, options);
-      // Return something awesome.
-      return $(elements).call(autoBox);
+
+      return $(elements).call(autoBox, options);
     };
 
     // Static method default options.
     $.autobox.options = {
-      resize: undefined, // 'vertical' | 'horizontal'
-      permanent: false
+        resize: undefined, // 'vertical' | 'horizontal'
+        permanent: false,
+        speed: 0, // restore height animation speed
+        delay: 250, // delay before restoring textarea height on blur
     };
 
     // Custom selector.
     $.expr[':'].autobox = function(elem) {
-      // Is this element awesome?
-      return $(elem).hasClass(autoboxedClass);
+      // Is this element autoboxed?
+      return $(elem).hasClass(AUTOBOXED_CLASS);
     };
 }
 
 if ( typeof window !== 'undefined' ) {
     const $ = window.jQuery || window.Zepto;
-    if ( $ ) init($);
+    if ( $ ) initJQAutobox($);
 }

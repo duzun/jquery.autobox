@@ -2,9 +2,6 @@
 
 Resize the `<textarea>` (vertically or horizontally) automatically to fit the contents.
 
-Note: This plugin is **under development**.
-      It is fully operational, but might have some unexpected behaviour.
-
 [![devDependencies](https://david-dm.org/duzun/jquery.autobox/dev-status.svg)](https://david-dm.org/duzun/jquery.autobox#info=devDependencies&view=table)
 
 ## Getting Started
@@ -30,15 +27,23 @@ In your web page:
 <script>
 jQuery(function($) {
 
-    // Bind autobox events to all TEXTAREAs in `.myView` and it's descendants.
-    $('.myView').autoboxBind();
+    // Bind autobox events to all TEXTAREAs in `.myView` and it's descendants, animation speed 200ms and delay before restoring size 400ms
+    $('.myView').autoboxBind({ speed: 200, delay: 400 });
 
-    // Bind autobox events to `document`, listening on `textarea.autobox` events.
+    // Bind autobox events to `document`, listening on `textarea.autobox` elements.
     $(document).autoboxOn('textarea.autobox');
 
-    // Adjust once Height/Width of all TEXTAREAs in `.myView` and it's descendants.
-    $('.myView').autobox();
+    // Bind autobox events to `document`, listening on `textarea.autobox` elements, with horizontal autogrow.
+    $(document).autoboxOn('textarea.autoboxh', { resize: 'horizontal' });
 
+    // Bind autobox events to `document`, listening on `textarea.autobox` elements, don't shrink after blur.
+    $(document).autoboxOn('textarea.autoboxp', { permanent: true });
+
+    // Adjust once Height of all TEXTAREAs in `.myView` and it's descendants.
+    $('.myView').autobox({ resize: 'vertical' });
+
+    // Adjust once Height and/or Width of all TEXTAREAs in `.myView` and it's descendants.
+    $('.myView').autobox();
 });
 </script>
 ```
@@ -58,10 +63,17 @@ autobox(jQuery); // init the plugin on this copy of jQuery
 
 This plugin exports three jQuery methods:
 
-* $().autobox()        - Adjust Height/Width of all TEXTAREAs in `this` and it's descendants
-* $().autoboxOn(sel)   - Bind Auto Height/Width Adjustment events to matched element, listening on `sel` elements
-* $().autoboxBind()    - Bind Auto Height/Width Adjustment events to all TEXTAREAs in `this` and it's descendants
+* $(sel).autobox(options)          - Adjust Height/Width of all TEXTAREAs in `this` and it's descendants
+* $(sel).autoboxOn(sel, options)   - Bind Auto Height/Width Adjustment events to matched element, listening on `sel` elements
+* $(sel).autoboxBind(options)      - Bind Auto Height/Width Adjustment events to all TEXTAREAs in `this` and it's descendants
+* $.autobox(elements, options)  - same as `$(elements).autobox(options)`
 
+#### Options:
+ 
+ *  permanent: bool - if false (default), the textarea would restore its size on blur
+ *  resize: "" | "vertical" | "horizontal" - resize mode, leave empty for auto-detection
+ *  speed: number - restore height animation speed (default 0 - no animation)
+ *  delay: number - delay before restoring textarea height on blur (default 250 milliseconds)
 
 ## Examples
 
@@ -74,7 +86,7 @@ This plugin exports three jQuery methods:
 </table>
 
 <script>
-$('body').autoboxOn('.autobox'); // All textareas inside .autobox elements would be autoboxed
+$('body').autoboxOn('.autobox', { permanent: false, resize: '' }); // All textareas inside .autobox elements would be autoboxed
 </script>
 ```
 

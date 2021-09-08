@@ -1,6 +1,6 @@
 {
   "name": "jquery.autobox",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "title": "Autogrow Textareas while typing",
   "description": "Resize the textarea (vertically or horizontally) automatically to fit the contents",
   "homepage": "https://github.com/duzun/jquery.autobox",
